@@ -1,14 +1,13 @@
 
 import './App.css'
-import ListaUsuario from './components/ListaUsuario'
-
+import CrudUsuario from './components/CrudUsuario'
 function App() {
   
 
   return (
 
     <>
-    <ListaUsuario/>
+      <CrudUsuario/>
     </>
   )
 }

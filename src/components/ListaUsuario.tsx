@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
-type Usuario = {
+export interface Usuario {
   id: number;
   name: string;
+  email: string;
 };
 
 const ListaUsuario: React.FC = () => {
-  const [usuarios, setUsuarios] = useState<Usuario[]|null>(null);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [error, setError] = useState<string|null>(null);
   useEffect(() => {
     traerDatos();
@@ -43,12 +44,14 @@ const ListaUsuario: React.FC = () => {
         <thead>
           <th>ID</th>
           <th>NAME</th>
+          <th>EMAIL</th>
         </thead>
         <tbody>
           {usuarios.map((user) => (
-            <tr>
+            <tr key={user.id}>
               <td>{user.id}</td>
               <td>{user.name}</td>
+              <td>{user.email}</td>
             </tr>
           ))}
         </tbody>
