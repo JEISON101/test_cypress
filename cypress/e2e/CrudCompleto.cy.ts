@@ -23,8 +23,8 @@ describe('Crud de usuarios', ()=> {
             statusCode: 201,
             body:user
         }).as('crearUsuario');
-        cy.get('input[name="name"]').type(user.name)
-        cy.get('input[name="email"]').type(user.email)
+        cy.get('input[name="name"]').clear().type(user.name)
+        cy.get('input[name="email"]').clear().type(user.email)
         cy.get('button[type="submit"]').click()
         cy.wait('@crearUsuario').its('request.body').should('deep.equal', {
           name: user.name,
