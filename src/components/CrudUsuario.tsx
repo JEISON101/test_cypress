@@ -41,6 +41,7 @@ const CrudUsuario = () => {
       useEffect(() => {
         traerDatos();
       }, []);
+
       const traerDatos = async () => {
         try {
           const res = await fetch(
@@ -66,6 +67,21 @@ const CrudUsuario = () => {
       };
       if (error) {
         return <div role="alert">{error}</div>;
+      }
+
+      const eliminar = async(id : number) => {
+        try {
+          await fetch('https://skojryaxbquqtwvuyhfv.supabase.co/rest/v1/users?id=eq.'+id, {
+            method: 'DELETE',
+            headers: {
+              apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrb2pyeWF4YnF1cXR3dnV5aGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MTQ0MTUsImV4cCI6MjA3MzA5MDQxNX0.nZMSWKNIve_UmSe1KEehy9ocL2FIR25QflnccDRQ998',
+              authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrb2pyeWF4YnF1cXR3dnV5aGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MTQ0MTUsImV4cCI6MjA3MzA5MDQxNX0.nZMSWKNIve_UmSe1KEehy9ocL2FIR25QflnccDRQ998'
+            }
+          });
+          alert('usuario eliminado');
+        } catch (error) {
+          alert('error al eliminar usuario');
+        }
       }
   
     return (
@@ -96,6 +112,7 @@ const CrudUsuario = () => {
               <th>ID</th>
               <th>NAME</th>
               <th>EMAIL</th>
+              <th>OPCIONES</th>
             </thead>
             <tbody>
               {usuarios.map((user) => (
@@ -103,6 +120,7 @@ const CrudUsuario = () => {
                   <td>{user.id}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
+                  <button onClick={()=> eliminar(user.id)}>Eliminar</button>
                 </tr>
               ))}
             </tbody>
