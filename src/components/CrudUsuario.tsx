@@ -12,10 +12,32 @@ const CrudUsuario = () => {
     const [email, setEmail] = useState<string | null>("");
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [error, setError] = useState<string|null>(null);
+    const [editar, setEditar] = useState<number|null>();
   
     const guardar = async (e: React.FormEvent) => {
       e.preventDefault();
-  
+
+      if(editar != null){
+          await fetch(
+          `https://skojryaxbquqtwvuyhfv.supabase.co/rest/v1/users?id=eq.${editar}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              apikey:
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrb2pyeWF4YnF1cXR3dnV5aGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MTQ0MTUsImV4cCI6MjA3MzA5MDQxNX0.nZMSWKNIve_UmSe1KEehy9ocL2FIR25QflnccDRQ998",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrb2pyeWF4YnF1cXR3dnV5aGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MTQ0MTUsImV4cCI6MjA3MzA5MDQxNX0.nZMSWKNIve_UmSe1KEehy9ocL2FIR25QflnccDRQ998",
+            },
+            body: JSON.stringify({ name, email }),
+          }
+        );
+        setEditar(null);
+        setName(null);
+        setEmail(null);
+        await traerDatos();
+        alert("Usuario actualizado");
+      }else{
       try {
         await fetch(
           "https://skojryaxbquqtwvuyhfv.supabase.co/rest/v1/users",
@@ -33,14 +55,16 @@ const CrudUsuario = () => {
         );
         setName(null);
         setEmail(null);
+        traerDatos();
       } catch (error) {
         console.error("Error al crear usuario:", error);
       }
     };
+  }
 
       useEffect(() => {
         traerDatos();
-      }, []);
+      }, [usuarios]);
 
       const traerDatos = async () => {
         try {
@@ -79,20 +103,28 @@ const CrudUsuario = () => {
             }
           });
           alert('usuario eliminado');
+          await traerDatos();
         } catch (error) {
           alert('error al eliminar usuario');
         }
       }
+
+      const edit = (user: Usuario) => {
+        setEditar(user.id);
+        setName(user.name);
+        setEmail(user.email);
+      }
   
     return (
       <div>
-        <h1>CREAR USUARIOS</h1>
+        <h1>{editar == null? 'CREAR USUARIOS':'EDITAR USUARIO'}</h1>
         <form onSubmit={guardar}>
           <label htmlFor="name">Nombre:</label>
           <input
             type="text"
             id="name"
             name="name"
+            value={name || ""}
             onChange={(e) => setName(e.target.value)}
           />
           <label htmlFor="email">Email: </label>
@@ -100,9 +132,10 @@ const CrudUsuario = () => {
             type="email"
             id="email"
             name="email"
+            value={email || ""}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <button type="submit">Crear Usuario</button>
+          <button type="submit">GUARDAR</button>
         </form>
         <br />
         <br />
@@ -120,7 +153,10 @@ const CrudUsuario = () => {
                   <td>{user.id}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
-                  <button onClick={()=> eliminar(user.id)}>Eliminar</button>
+                  <td>
+                    <button onClick={()=> edit(user)}>Editar</button>
+                    <button onClick={()=> eliminar(user.id)}>Eliminar</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

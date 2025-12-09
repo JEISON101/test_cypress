@@ -76,4 +76,32 @@ describe('Crud de usuarios', ()=> {
     })
   })  
 
+  it('editar usuario', ()=>{
+    cy.fixture('usuarios.json').then((mock)=>{
+
+      cy.fixture('crudUsuarioEliminar.json').then((mockEdit)=>{
+        cy.intercept(
+          'GET',
+          'https://skojryaxbquqtwvuyhfv.supabase.co/rest/v1/users?select=*',
+          {
+            statusCode: 200,
+            body: mock
+          }
+        ).as('getUsusarios')
+        cy.intercept(
+          'PUT',
+          'https://skojryaxbquqtwvuyhfv.supabase.co/rest/v1/users?id=eq.'+mockEdit.id, 
+          {
+            statusCode: 204,
+            body: {name: mockEdit.name, email: mockEdit.email}
+        }).as('editarUsuario');
+
+        cy.visit('http://localhost:5173/')
+        cy.wait('@getUsusarios');
+        cy.contains(mock[0].name).parent().find('button').contains('Eliminar').click();
+        cy.wait('@editarUsuario');
+      })
+    })
+  })
+
 })
